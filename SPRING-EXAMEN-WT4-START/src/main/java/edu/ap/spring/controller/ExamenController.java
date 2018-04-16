@@ -2,6 +2,9 @@ package edu.ap.spring.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,7 +33,7 @@ public class ExamenController {
 			this.service = service;
 	   }
 	   
-	   @RequestMapping("/")
+	   @RequestMapping("/new")
 	   @ResponseBody
 	   public String messages() {
 		   String html = "<HTML><HEAD><meta http-equiv=\"refresh\" content=\"5\"></HEAD>";
@@ -72,6 +75,37 @@ public class ExamenController {
 	   
 	   public void onMessage(String message) {
 		   this.redisMessages.add(message);
+	   }
+	   
+	   @RequestMapping("/list")
+	   @ResponseBody
+	   public String list() {
+
+		   String html = "<HTML>";
+		   // get the bitcount of our counter
+		   html += "<BODY><h1>Examens</h1><br/><br/><ul>";
+		   
+		   Set<String> examens = service.keys("examen:*");
+		   for(String e : examens) {
+			   // make a key from the byte array
+			   String key = e;
+			   // get hash with actors
+			   Map<Object, Object> examen = service.hgetAll(key);
+			   // get all parts of the key, eg : ["movies", "1998", "The Big Lebowski"]
+			  // String[] parts = key.split(":");
+			   
+			   // html += "<li>" + parts[2] + " (" + parts[1] + ")<br/>";
+			   html += "Examen : ";
+			   // iterate over actors
+			   for(Entry<Object, Object> entry : examen.entrySet()) {
+				   html += entry.getValue() + ", ";
+			   }
+			   // strip off last ', '
+			   html = html.substring(0, html.length() - 2);
+		   }
+		   html += "</BODY></HTML>";
+		   
+		   return html;
 	   }
 
 }

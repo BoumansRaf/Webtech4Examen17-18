@@ -15,7 +15,7 @@ import edu.ap.spring.redis.RedisService;
 @Repository
 public class InhaalExamenRepository implements RedisRepository {
 	private RedisService service;
-	  private static final String KEY = "Examen";
+	  private static final String KEY = "examen";
 	    private RedisTemplate<String, Object> redisTemplate;
 	    private HashOperations hashOperations;
 	    
