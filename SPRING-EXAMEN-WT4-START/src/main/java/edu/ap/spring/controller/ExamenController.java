@@ -69,5 +69,9 @@ public class ExamenController {
 	        redisRepository.add(examen);
 	        return new ResponseEntity<>(HttpStatus.OK);
 	    }
+	   
+	   public void onMessage(String message) {
+		   this.redisMessages.add(message);
+	   }
 
 }
