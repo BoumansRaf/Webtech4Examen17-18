@@ -1,20 +1,31 @@
 package edu.ap.spring.model;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import edu.ap.spring.redis.RedisService;
+
 @Repository
 public class InhaalExamenRepository implements RedisRepository {
-	
+	private RedisService service;
 	  private static final String KEY = "Examen";
 	    private RedisTemplate<String, Object> redisTemplate;
 	    private HashOperations hashOperations;
 	    
 	    @Autowired
-	    public RedisRepositoryImpl(RedisTemplate<String, Object> redisTemplate){
+		public void setRedisService(RedisService service) {
+			this.service = service;
+		}
+	    
+	    @Autowired
+	    public InhaalExamenRepository(RedisTemplate<String, Object> redisTemplate){
 	        this.redisTemplate = redisTemplate;
 	    }
 	    @PostConstruct
@@ -24,26 +35,33 @@ public class InhaalExamenRepository implements RedisRepository {
 
 	@Override
 	public Map<Object, Object> findAllExamen() {
-		// TODO Auto-generated method stub
-		return null;
+		 return hashOperations.entries(KEY);
 	}
 
 	@Override
 	public void add(InhaalExamen examen) {
-		// TODO Auto-generated method stub
+		Map<String, String> examenDetails = new HashMap<String, String>();
+		examenDetails.put("exam", examen.getExam());
+		examenDetails.put("date", examen.getDate());
+		examenDetails.put("reason", examen.getReason());
 		
+		 service.hset(KEY, examenDetails);
+		 
+		 
+		
+	}
+
+	
+
+	@Override
+	public InhaalExamen findExamen(String student) {
+		return (InhaalExamen) hashOperations.get(KEY, student);
 	}
 
 	@Override
 	public void delete(String id) {
 		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public InhaalExamen findExamen(String student) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
